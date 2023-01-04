@@ -1,2 +1,5 @@
-nose
-sphinx
+boto3
+py-crunchbase-api
+botocore
+pandas
+setuptools
