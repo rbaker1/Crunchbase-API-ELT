@@ -4,6 +4,17 @@ import io
 import json
 from datetime import datetime
 
+
+class IteratorAsList(list):
+    def __init__(self, it):
+        self.it = it
+
+    def __iter__(self):
+        return self.it
+
+    def __len__(self):
+        return 1
+
 class CrunchbaseExtractor:
     """
     This is the class that will extract organizations from Crunchbase
@@ -32,6 +43,20 @@ class CrunchbaseExtractor:
             output_io.seek(0)
             return output_io
 
+        def apitojson(data):
+            output = []
+            for i in data:
+                output.append(i)
+            r = json.dumps(output)
+            #loaded_r = json.loads(r)
+            return r
+        def apitoarray(data):
+            output = []
+            for i in data:
+                output.append(i)
+           # r = json.dumps(output)
+           # loaded_r = json.loads(r)
+            return output
         pycb = PyCrunchbase(self.api_key)  # needs to be as secret AWS
         api = pycb.search_organizations_api()
         org_facet_ids = Entities.Organization.Facets
@@ -134,4 +159,11 @@ class CrunchbaseExtractor:
             facet_ids__includes=[org_facet_ids.company]
         ).execute()
 
-        return apitooutput(cb_data), objectNamer()
+        return apitojson(cb_data), objectNamer()
+
+    def writeOutput(self, data, filename):
+        filepath = "/tmp/" + filename
+        with open(filepath, 'w') as out:
+            json.dump(data, out)
+
+        return filepath
