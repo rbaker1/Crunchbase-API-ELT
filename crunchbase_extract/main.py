@@ -4,16 +4,9 @@ import io
 import json
 from datetime import datetime
 
+from py_crunchbase.apis import SearchAPI
+from py_crunchbase.entities import Entity
 
-class IteratorAsList(list):
-    def __init__(self, it):
-        self.it = it
-
-    def __iter__(self):
-        return self.it
-
-    def __len__(self):
-        return 1
 
 class CrunchbaseExtractor:
     """
@@ -23,44 +16,42 @@ class CrunchbaseExtractor:
     def __init__(self, api_key: str = None):
         self.api_key = api_key
 
+    def bytesOutput(self, page):
+        output = []
+        for i in page:
+            output.append(i)
+        output_io = io.BytesIO()
+        pickle.dump(output, output_io)
+        output_io.seek(0)
+        return output_io
+
+    def jsonOutput(self, page):
+        output = []
+        for i in page:
+            output.append(i)
+        r = json.dumps(output)
+        return r
+
+    def arrayOutput(self, page):
+        output = []
+        for i in page:
+            output.append(i)
+        return output
+
+    def objectNamer(self, seq_no):
+        prefix_str = 'cb_org'
+        dt_string = datetime.now().strftime("%Y%m%d")
+        suffix_str = '.json'
+
+        return prefix_str + '/extract' + dt_string + '_' + str(seq_no) + suffix_str
+
     def callAPI(self):
         limit_n = 15
 
-        def objectNamer():
-            prefix_str = 'cb_org_extract'
-            dt_string = datetime.now().strftime("%Y%m%d%H%M%S")
-            suffix_str = '.json'
-
-            return prefix_str + dt_string + suffix_str
-
-        def apitooutput(data):
-            output = []
-            for i in data:
-                output.append(i)
-               # r = json.dumps(output)
-            output_io = io.BytesIO()
-            pickle.dump(output, output_io)
-            output_io.seek(0)
-            return output_io
-
-        def apitojson(data):
-            output = []
-            for i in data:
-                output.append(i)
-            r = json.dumps(output)
-            #loaded_r = json.loads(r)
-            return r
-        def apitoarray(data):
-            output = []
-            for i in data:
-                output.append(i)
-           # r = json.dumps(output)
-           # loaded_r = json.loads(r)
-            return output
         pycb = PyCrunchbase(self.api_key)  # needs to be as secret AWS
         api = pycb.search_organizations_api()
         org_facet_ids = Entities.Organization.Facets
-        cb_data = api.select(
+        api.select(
             'acquirer_identifier',
             'aliases',
             'categories',
@@ -70,22 +61,22 @@ class CrunchbaseExtractor:
             'contact_email',
             'created_at',
             'delisted_on',
-            'demo_days',
+            # 'demo_days',
             'description',
-            'diversity_spotlights',
-            'entity_def_id',
+            # 'diversity_spotlights',
+            # 'entity_def_id',
             'equity_funding_total',
             'exited_on',
             'facebook',
-            'facet_ids',
+            # 'facet_ids',
             'founded_on',
-            'founder_identifiers',
+            # 'founder_identifiers',
             'funding_stage',
             'funding_total',
             'funds_total',
-            'hub_tags',
+            # 'hub_tags',
             'identifier',
-            'investor_identifiers',
+            # 'investor_identifiers',
             'investor_stage',
             'investor_type',
             'ipo_status',
@@ -94,7 +85,7 @@ class CrunchbaseExtractor:
             'last_funding_at',
             'last_funding_total',
             'last_funding_type',
-            'layout_id',
+            # 'layout_id',
             'legal_name',
             'linkedin',
             'listed_stock_symbol',
@@ -124,24 +115,24 @@ class CrunchbaseExtractor:
             'num_portfolio_organizations',
             'num_sub_organizations',
             'operating_status',
-            'override_layout_id',
+            # 'override_layout_id',
             'owner_identifier',
             'permalink',
-            'permalink_aliases',
+            # 'permalink_aliases',
             'phone_number',
-            'program_application_deadline',
-            'program_duration',
-            'program_type',
-            'rank_delta_d30',
-            'rank_delta_d7',
-            'rank_delta_d90',
+            # 'program_application_deadline',
+            # 'program_duration',
+            # 'program_type',
+            # 'rank_delta_d30',
+            # 'rank_delta_d7',
+            # 'rank_delta_d90',
             'rank_org',
-            'rank_principal',
+            # 'rank_principal',
             'revenue_range',
-            'school_method',
-            'school_program',
-            'school_type',
-            'short_description',
+            # 'school_method',
+            # 'school_program',
+            # 'school_type',
+            # 'short_description',
             'status',
             'stock_exchange_symbol',
             'stock_symbol',
@@ -154,12 +145,11 @@ class CrunchbaseExtractor:
             'website_url',
             'went_public_on'
         ).where(
-           # num_employees_enum__includes=['c_00051_00100'],
-            location_identifiers__includes=['f110fca2-1055-99f6-996d-011c198b3928'],
-            facet_ids__includes=[org_facet_ids.company]
-        ).execute()
+            # num_employees_enum__includes=['c_00051_00100'],
+            location_identifiers__includes=['f110fca2-1055-99f6-996d-011c198b3928']
+        )
 
-        return apitojson(cb_data), objectNamer()
+        return api
 
     def writeOutput(self, data, filename):
         filepath = "/tmp/" + filename
