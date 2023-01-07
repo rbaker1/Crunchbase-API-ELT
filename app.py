@@ -29,6 +29,5 @@ def main():
     s3uploader = S3Uploader(AWS_ACCESS_KEY, AWS_SECRET_KEY, BUCKET)
     pageIterator(cbextractor, s3uploader, 5)
 
-
-main()
-# cProfile.run('main()')
+def handler(event, context):
+    main()

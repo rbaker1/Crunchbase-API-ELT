@@ -1,9 +1,9 @@
 version: '3.7'
 
 services:
-  pdf-pages:
+  cbapiextractor:
     build:
-      context: ./
+      context: ..
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
@@ -14,8 +14,6 @@ services:
     volumes:
       - ./app.py:/var/task/app.py
       - ./src:/var/task/src
-    ports:
-      - "${DOCKER_PDF_PAGES_PORT:-3001}:8080"
     networks:
       home:
 
