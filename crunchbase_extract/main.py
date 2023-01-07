@@ -4,39 +4,33 @@ import io
 import json
 from datetime import datetime
 
-from py_crunchbase.apis import SearchAPI
-from py_crunchbase.entities import Entity
 
-
-class CrunchbaseExtractor:
+class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
     """
     This is the class that will extract organizations from Crunchbase
     """
 
     def __init__(self, api_key: str = None):
-        self.api_key = api_key
+        super().__init__(api_key)
 
-    def bytesOutput(self, page):
-        output = []
-        for i in page:
-            output.append(i)
-        output_io = io.BytesIO()
-        pickle.dump(output, output_io)
-        output_io.seek(0)
-        return output_io
-
-    def jsonOutput(self, page):
-        output = []
-        for i in page:
-            output.append(i)
-        r = json.dumps(output)
+    def extractionOutput(self, page, formattype='json'):
+        try:
+            r = 0
+            if formattype in ('json', 'bytes', 'array'):
+                output = []
+                for i in page:
+                    output.append(i)
+                if formattype == 'json':
+                    r = json.dumps(output)
+                elif formattype == 'bytes':
+                    r = io.BytesIO()
+                    pickle.dump(output, r)
+                    r.seek(0)
+                elif formattype == 'array':
+                    r = output
+        except:
+            raise Exception("Function only accepts: 'json', 'bytes', 'array'")
         return r
-
-    def arrayOutput(self, page):
-        output = []
-        for i in page:
-            output.append(i)
-        return output
 
     def objectNamer(self, seq_no):
         prefix_str = 'cb_org'
@@ -46,11 +40,8 @@ class CrunchbaseExtractor:
         return prefix_str + '/extract' + dt_string + '_' + str(seq_no) + suffix_str
 
     def callAPI(self):
-        limit_n = 15
-
-        pycb = PyCrunchbase(self.api_key)  # needs to be as secret AWS
-        api = pycb.search_organizations_api()
-        org_facet_ids = Entities.Organization.Facets
+        api = self.search_organizations_api()
+        #org_facet_ids = Entities.Organization.Facets
         api.select(
             'acquirer_identifier',
             'aliases',
