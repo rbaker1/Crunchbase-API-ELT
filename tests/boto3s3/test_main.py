@@ -1,9 +1,6 @@
-import random
-from unittest.mock import patch, MagicMock
-
 import pytest
 
-from ...boto3s3 import S3Uploader
+from app.src import S3Uploader
 
 class TestS3Uploader:
     @pytest.fixture(name='s3', scope='class')

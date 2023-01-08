@@ -6,7 +6,6 @@ __pycache__/
 #docs for now
 docs/
 
-
 # C extensions
 *.so
 
@@ -97,3 +96,5 @@ ENV/
 
 # Rope project settings
 .ropeproject
+/.idea/
+/awscli-bundle/

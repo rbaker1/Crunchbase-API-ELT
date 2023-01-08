@@ -1,5 +1,4 @@
-boto3==1.26.45
+boto3
 py-crunchbase-api
-botocore==1.29.45
-pandas
-setuptools==65.6.3
+botocore
+setuptools

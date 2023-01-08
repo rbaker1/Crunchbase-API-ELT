@@ -1,10 +1,7 @@
-import random
-from unittest.mock import patch, MagicMock
-
 import pytest
 
-from ...crunchbase_extract import CrunchbaseExtractor
-from py_crunchbase.entities import Entity, Entities
+from app.src.crunchbase_extract import CrunchbaseExtractor
+from py_crunchbase.entities import Entity
 
 
 class SampleEntity(Entity):

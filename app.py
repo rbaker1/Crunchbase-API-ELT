@@ -1,4 +1,5 @@
 import os
+import logging
 from crunchbase_extract import CrunchbaseExtractor
 from boto3s3 import S3Uploader
 
@@ -6,8 +7,11 @@ from boto3s3 import S3Uploader
 
 CB_API_KEY = os.environ['CB_API_KEY_PROD']
 BUCKET = os.environ['BUCKET_DESTINATION']
-AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY_PROD']
-AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY_PROD']
+#AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY_PROD']
+#AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY_PROD']
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def pageIterator(cbextractor, s3uploader, page_lim=9999):
@@ -26,8 +30,9 @@ def pageIterator(cbextractor, s3uploader, page_lim=9999):
 
 def main():
     cbextractor = CrunchbaseExtractor(CB_API_KEY)
-    s3uploader = S3Uploader(AWS_ACCESS_KEY, AWS_SECRET_KEY, BUCKET)
-    pageIterator(cbextractor, s3uploader, 5)
+    s3uploader = S3Uploader(BUCKET)
+    pageIterator(cbextractor, s3uploader)
+
 
 def handler(event, context):
-    main()
+    return main()
