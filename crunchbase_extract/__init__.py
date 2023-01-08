@@ -1,7 +1,7 @@
 from py_crunchbase import PyCrunchbase
 import pickle
 import io
-import json
+import orjson
 from datetime import datetime
 
 
@@ -21,7 +21,7 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
                 for i in page:
                     output.append(i)
                 if formattype == 'json':
-                    r = json.dumps(output)
+                    r = orjson.dumps(output)
                 elif formattype == 'bytes':
                     r = io.BytesIO()
                     pickle.dump(output, r)
@@ -41,7 +41,7 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
 
     def callAPI(self):
         api = self.search_organizations_api()
-        #org_facet_ids = Entities.Organization.Facets
+        # org_facet_ids = Entities.Organization.Facets
         api.select(
             'acquirer_identifier',
             'aliases',
