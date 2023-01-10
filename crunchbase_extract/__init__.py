@@ -2,6 +2,7 @@ from py_crunchbase import PyCrunchbase
 import pickle
 import io
 import orjson
+import json
 from datetime import datetime
 
 
@@ -13,7 +14,8 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
     def __init__(self, api_key: str = None):
         super().__init__(api_key)
 
-    def extractionOutput(self, page, formattype='json'):
+    @staticmethod
+    def extractionOutput(page, formattype='json'):
         try:
             r = 0
             if formattype in ('json', 'bytes', 'array'):
@@ -21,18 +23,19 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
                 for i in page:
                     output.append(i)
                 if formattype == 'json':
-                    r = orjson.dumps(output)
+                    r = str(orjson.dumps(output), "utf-8")
                 elif formattype == 'bytes':
                     r = io.BytesIO()
                     pickle.dump(output, r)
                     r.seek(0)
                 elif formattype == 'array':
                     r = output
-        except:
+        except Exception:
             raise Exception("Function only accepts: 'json', 'bytes', 'array'")
         return r
 
-    def objectNamer(self, seq_no):
+    @staticmethod
+    def objectNamer(seq_no):
         prefix_str = 'cb_org'
         dt_string = datetime.now().strftime("%Y%m%d")
         suffix_str = '.json'
@@ -41,10 +44,9 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
 
     def callAPI(self):
         api = self.search_organizations_api()
-        # org_facet_ids = Entities.Organization.Facets
-        api.select(
-            'acquirer_identifier',
-            'aliases',
+
+        api.select(  # 'acquirer_identifier',
+            # 'aliases',
             'categories',
             'category_groups',
             'closed_on',
@@ -88,13 +90,13 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
             'num_articles',
             'num_current_advisor_positions',
             'num_current_positions',
-            'num_diversity_spotlight_investments',
+            # 'num_diversity_spotlight_investments',
             'num_employees_enum',
             'num_enrollments',
             'num_event_appearances',
             'num_exits',
             'num_exits_ipo',
-            'num_founder_alumni',
+            # 'num_founder_alumni',
             'num_founders',
             'num_funding_rounds',
             'num_funds',
@@ -142,7 +144,8 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
 
         return api
 
-    def writeOutput(self, data, filename):
+    @staticmethod
+    def writeOutput(data, filename):
         filepath = "/tmp/" + filename
         with open(filepath, 'w') as out:
             json.dump(data, out)

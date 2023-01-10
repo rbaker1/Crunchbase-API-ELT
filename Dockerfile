@@ -6,14 +6,14 @@ COPY /boto3s3 /boto3s3
 COPY app.py ${LAMBDA_TASK_ROOT}
 
 # Copy lambda function code and install requirements
-COPY . .
+COPY tests .
 
 # Install the function's dependencies using file requirements.txt
 # from your project folder
 RUN pip install --upgrade pip
 COPY requirements.txt  .
 RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
-ADD . .
+ADD tests .
 
 ARG CB_API_KEY_PROD
 ARG BUCKET_DESTINATION

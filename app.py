@@ -3,12 +3,8 @@ import logging
 from crunchbase_extract import CrunchbaseExtractor
 from boto3s3 import S3Uploader
 
-# import cProfile
-
 CB_API_KEY = os.environ['CB_API_KEY_PROD']
 BUCKET = os.environ['BUCKET_DESTINATION']
-#AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY_PROD']
-#AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY_PROD']
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -24,15 +20,16 @@ def pageIterator(cbextractor, s3uploader, page_lim=9999):
         try:
             s3uploader.put_object(cbextractor.extractionOutput(page, 'json'), cbextractor.objectNamer(page_no))
             print('Successfully extracted and uploaded page ' + str(page_no))
-        except:
+        except Exception:
             raise Exception('Unable to upload to s3. Job failed on page ' + str(page_no))
 
 
 def main():
     cbextractor = CrunchbaseExtractor(CB_API_KEY)
     s3uploader = S3Uploader(BUCKET)
-    pageIterator(cbextractor, s3uploader)
+    pageIterator(cbextractor, s3uploader, 10)
 
 
 def handler(event, context):
     return main()
+
