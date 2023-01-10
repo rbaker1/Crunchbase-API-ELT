@@ -32,4 +32,3 @@ def main():
 
 def handler(event, context):
     return main()
-
