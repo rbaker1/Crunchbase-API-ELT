@@ -79,6 +79,7 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
             'last_funding_total',
             'last_funding_type',
             # 'layout_id',
+            'last_layoff_date',
             'legal_name',
             'linkedin',
             'listed_stock_symbol',
@@ -137,11 +138,7 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
             'website',
             'website_url',
             'went_public_on'
-        ).where(
-            # num_employees_enum__includes=['c_00051_00100'],
-            location_identifiers__includes=['f110fca2-1055-99f6-996d-011c198b3928']
         )
-
         return api
 
     @staticmethod
