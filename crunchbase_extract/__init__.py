@@ -79,7 +79,7 @@ class CrunchbaseExtractor(PyCrunchbase):  # todo: not tested yet
             'last_funding_total',
             'last_funding_type',
             # 'layout_id',
-            'last_layoff_date',
+            #'last_layoff_date',
             'legal_name',
             'linkedin',
             'listed_stock_symbol',

@@ -27,6 +27,7 @@ def pageIterator(cbextractor, s3uploader, page_lim=9999):
 def main():
     cbextractor = CrunchbaseExtractor(CB_API_KEY)
     s3uploader = S3Uploader(BUCKET)
+    s3uploader.clear_bucket()
     pageIterator(cbextractor, s3uploader)
 
 main()

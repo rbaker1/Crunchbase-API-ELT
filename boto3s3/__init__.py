@@ -5,6 +5,15 @@ class S3Uploader:
     def __init__(self, bucket):
         self.bucket = bucket
 
+    def clear_bucket(self):
+        """
+        Clear bucket contents before reloading
+        """
+        s3 = boto3.resource('s3')
+        bucket = s3.Bucket(self.bucket)
+        response = bucket.objects.filter(Prefix="cb_org/").delete()
+        return response
+
     def upload_fileobj(self, data, object_name):
         """
         Function to upload a file to an S3 bucket
