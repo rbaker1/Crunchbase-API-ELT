@@ -1,6 +1,6 @@
 Crunchbase API Data Pipeline
 ========================
 
-In development
+Version 1.0
 ---------------
 
